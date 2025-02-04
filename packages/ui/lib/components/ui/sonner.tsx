@@ -1,5 +1,4 @@
 import { useTheme } from 'next-themes';
-import { useEffect } from 'react';
 import { Toaster as Sonner } from 'sonner';
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
@@ -7,9 +6,6 @@ type ToasterProps = React.ComponentProps<typeof Sonner>;
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = 'system' } = useTheme();
 
-  const is_initialized = useEffect(() => {
-    console.log('hellow from sonner');
-  }, []);
   return (
     <Sonner
       theme={theme as ToasterProps['theme']}

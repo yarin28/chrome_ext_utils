@@ -7,7 +7,11 @@ export function withUI(tailwindConfig: Config): Config {
   return deepmerge(
     shadcnConfig,
     deepmerge(tailwindConfig, {
-      content: ['./node_modules/@extension/ui/lib/**/*.{tsx,ts,js,jsx}'],
+      content: [
+        './node_modules/@extension/ui/lib/**/*.{tsx,ts,js,jsx}',
+        './node_modules/@extension/ui/lib/components/ui/*.{tsx,ts,js,jsx}',
+        '.components/**/*.{tsx,ts,js,jsx',
+      ],
     }),
   );
 }
