@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import App from '@src/App';
 import tailwindcssOutput from '../dist/tailwind-output.css?inline';
+import '@extension/ui/dist/global.css';
 
 const root = document.createElement('div');
 root.id = 'chrome-extension-boilerplate-react-vite-content-view-root';
@@ -31,3 +32,13 @@ if (navigator.userAgent.includes('Firefox')) {
 
 shadowRoot.appendChild(rootIntoShadow);
 createRoot(rootIntoShadow).render(<App />);
+
+// FIXME: this is a test to see
+// if globalStyleSheet will fix the dialog
+
+// In your content script entry file (e.g., `src/content-ui/index.tsx`)
+
+// Inject styles into the page's <head>
+const styleTag = document.createElement('style');
+styleTag.textContent = tailwindcssOutput;
+document.head.appendChild(styleTag);
