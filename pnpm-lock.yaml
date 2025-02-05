@@ -17,6 +17,12 @@ importers:
       '@vitejs/plugin-react-swc':
         specifier: ^3.7.2
         version: 3.7.2(vite@6.0.5(@types/node@22.7.4)(jiti@2.4.2)(lightningcss@1.29.1)(sass@1.79.4)(terser@5.34.1)(tsx@4.19.2)(yaml@2.5.1))
+      ag-grid-community:
+        specifier: ^33.0.4
+        version: 33.0.4
+      ag-grid-react:
+        specifier: ^33.0.4
+        version: 33.0.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -1885,6 +1891,18 @@ packages:
     resolution: {integrity: sha512-tcpGyI9zbizT9JbV6oYE477V6mTlXvvi0T0G3SNIYE2apm/G5huBa1+K89VGeovbg+jycCrfhl3ADxErOuO6Jg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
+
+  ag-charts-types@11.0.4:
+    resolution: {integrity: sha512-K/Mi7FXvSCoABLSrqQ70k1QrIL5R6RNCt2NAppOxMEir+DVFPqKZtghruobc2MGVUUKkT9MCn6Dun+fL6yZjfA==}
+
+  ag-grid-community@33.0.4:
+    resolution: {integrity: sha512-iBD8g8bNIl95w9CzCQpDid+eTdmOoT39204sPUOhE9eE50vfoDHIaF5U4fRYQHbLsT4bwbXfQYdsqBAOLJL24w==}
+
+  ag-grid-react@33.0.4:
+    resolution: {integrity: sha512-0Y54BmY03athtqfpO5kTR/gjyP6Qw4LP+EQD2duBZ3yj4SWWlwE1Ob7Lc7OuZRHxl2dxLQy2edagJHrqnmopKw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   agent-base@7.1.1:
     resolution: {integrity: sha512-H0TSyFNDMomMNJQBn8wFV5YC/2eJ+VXECwOadZJT554xP6cODZHPX3H9QMQECxvrgiSOP1pHjy1sMWQVYJOUOA==}
@@ -6686,6 +6704,19 @@ snapshots:
       acorn: 8.12.1
 
   acorn@8.12.1: {}
+
+  ag-charts-types@11.0.4: {}
+
+  ag-grid-community@33.0.4:
+    dependencies:
+      ag-charts-types: 11.0.4
+
+  ag-grid-react@33.0.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      ag-grid-community: 33.0.4
+      prop-types: 15.8.1
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   agent-base@7.1.1:
     dependencies:
