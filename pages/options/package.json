@@ -21,14 +21,16 @@
   "dependencies": {
     "@extension/shared": "workspace:*",
     "@extension/storage": "workspace:*",
-    "@extension/ui": "workspace:*"
+    "@extension/ui": "workspace:*",
+    "jsoneditor": "^10.1.2",
+    "jsoneditor-react": "^3.1.2"
   },
   "devDependencies": {
     "@extension/tailwindcss-config": "workspace:*",
     "@extension/tsconfig": "workspace:*",
     "@extension/vite-config": "workspace:*",
-    "postcss-load-config": "^6.0.1",
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "postcss-load-config": "^6.0.1"
   },
   "postcss": {
     "plugins": {
