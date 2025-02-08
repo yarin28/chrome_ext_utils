@@ -31,7 +31,6 @@ import React from 'react';
 const UserManager = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [editData, setEditData] = useState<any>(null);
   const [showEditor, setShowEditor] = useState(false);
   const [viewMode, setViewMode] = useState<'form' | 'json'>('form');
   const editorRef = React.createRef();
@@ -41,6 +40,7 @@ const UserManager = () => {
     chrome.storage.sync.get(['users'], result => {
       if (result.users) {
         setUsers(result.users);
+        editorRef.current.jsonEditor.set(result.users);
       }
     });
   }, []);
@@ -64,136 +64,65 @@ const UserManager = () => {
     resizable: true,
   };
 
-  const handleEdit = (user: User) => {
-    setSelectedUser(user);
-    setEditData({ ...user });
+  const handleEdit = (users: User[]) => {
+    setUsers({ ...users });
     if (editorRef.current) {
-      editorRef.current.jsonEditor.set({ ...user });
+      editorRef.current.jsonEditor.set({ ...users });
     }
     setShowEditor(true);
   };
 
   const handleSave = async () => {
-    console.log('inside handleSave, the vars are selected user and editData:', selectedUser, editData);
+    console.log('inside handleSave, the vars are selected user and editData:', selectedUser, users);
 
-    if (!selectedUser || !editData) return;
+    if (!users) return;
 
-    const updatedUsers = users.map(user => (user.id === selectedUser.id ? { ...editData, id: user.id } : user));
-
-    chrome.storage.sync.set({ updatedUsers }, () => {
-      console.log('Users saved:', updatedUsers);
+    chrome.storage.sync.set({ users }, () => {
+      console.log('Users saved:', users);
     });
-    setUsers(updatedUsers);
     setShowEditor(false);
   };
 
   const handleJsonChange = (json: any) => {
     console.log('json:', json);
-    setEditData(json);
+    setUsers(json);
   };
   const handleAddRandomUsers = async () => {
     const newUsers = generateRandomUsers(10);
     const updatedUsers = [...users, ...newUsers];
     setUsers(updatedUsers);
+    editorRef.current.jsonEditor.set(updatedUsers);
   };
   return (
     <div className="user-manager">
       <Button onClick={handleAddRandomUsers} variant="custom">
         Add Random Users
       </Button>
-      <div className="ag-theme-alpine" style={{ height: 500 }}>
-        <AgGridReact
-          rowData={users}
-          columnDefs={columnDefs}
-          defaultColDef={defaultColDef}
-          rowSelection="single"
-          onGridReady={params => params.api.sizeColumnsToFit()}
-        />
-      </div>
 
-      {showEditor && (
-        <div className="editor-modal">
-          <div className="mode-toggle">
-            <button onClick={() => setViewMode('form')}>Form View</button>
-            <button onClick={() => setViewMode('json')}>JSON View</button>
-          </div>
-
-          {viewMode === 'form' ? (
-            <div className="form-view">
-              <label>
-                Name:
-                <input
-                  value={editData?.name || ''}
-                  onChange={e => setEditData({ ...editData, name: e.target.value })}
-                  required
-                />
-              </label>
-
-              <label>
-                Role:
-                <select value={editData?.role || ''} onChange={e => setEditData({ ...editData, role: e.target.value })}>
-                  <option value="admin">Admin</option>
-                  <option value="editor">Editor</option>
-                  <option value="viewer">Viewer</option>
-                </select>
-              </label>
-
-              <div className="custom-fields">
-                <h4>Additional Properties</h4>
-                {Object.keys(editData)
-                  .filter(key => !['id', 'name', 'role'].includes(key))
-                  .map(key => (
-                    <div key={key} className="custom-field">
-                      <input
-                        value={key}
-                        onChange={e => {
-                          const newData = { ...editData };
-                          const value = newData[key];
-                          delete newData[key];
-                          newData[e.target.value] = value;
-                          setEditData(newData);
-                        }}
-                      />
-                      <input
-                        value={editData[key]}
-                        onChange={e =>
-                          setEditData({
-                            ...editData,
-                            [key]: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                  ))}
-                <button onClick={() => setEditData({ ...editData, newProperty: '' })}>+ Add Property</button>
-              </div>
-            </div>
-          ) : (
-            <div className="json-view">
-              <Editor
-                ref={editorRef}
-                value={editData}
-                onChange={handleJsonChange}
-                ace={ace}
-                mode="code"
-                history={true}
-                navigationBar={false}
-                statusBar={false}
-                style={{ height: '400px' }}
-              />
-            </div>
-          )}
-
-          <div className="modal-actions">
-            <Button variant="outline" onClick={() => setShowEditor(false)}>
-              Cancel
-            </Button>
-            <Button variant="outline" onClick={handleSave}>
-              Save Changes
-            </Button>
-          </div>
+      <div className="editor-modal">
+        <div className="json-view">
+          <Editor
+            ref={editorRef}
+            value={users}
+            onChange={handleJsonChange}
+            ace={ace}
+            mode="code"
+            history={true}
+            navigationBar={false}
+            statusBar={false}
+            style={{ height: '400px' }}
+          />
         </div>
-      )}
+
+        <div className="modal-actions">
+          <Button variant="outline" onClick={() => setShowEditor(false)}>
+            Cancel
+          </Button>
+          <Button variant="outline" onClick={handleSave}>
+            Save Changes
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
