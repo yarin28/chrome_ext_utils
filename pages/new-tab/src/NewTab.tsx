@@ -6,7 +6,6 @@ import { Button } from '@extension/ui';
 import { t } from '@extension/i18n';
 import { AuroraText } from '@extension/ui';
 import { Toaster } from '@extension/ui/lib/components/ui/sonner';
-import { useToast } from '@extension/ui';
 import { toast } from 'sonner';
 
 const NewTab = () => {
