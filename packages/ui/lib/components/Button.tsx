@@ -1,19 +1,16 @@
 import type { ComponentPropsWithoutRef } from 'react';
 import { cn } from '../utils';
+import { buttonVariants } from './buttonVariants';
 
 export type ButtonProps = {
   theme?: 'light' | 'dark';
+  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' | 'custom';
+  size?: 'default';
 } & ComponentPropsWithoutRef<'button'>;
 
-export function Button({ theme, className, children, ...props }: ButtonProps) {
+export function Button({ theme, className, variant, size, children, ...props }: ButtonProps) {
   return (
-    <button
-      className={cn(
-        className,
-        'py-1 px-4 rounded shadow hover:scale-105',
-        theme === 'light' ? 'bg-white text-black' : 'bg-black text-white',
-      )}
-      {...props}>
+    <button className={cn(buttonVariants({ variant, size, className }))} {...props}>
       {children}
     </button>
   );
