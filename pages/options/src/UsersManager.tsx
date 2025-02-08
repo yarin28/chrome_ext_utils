@@ -89,6 +89,7 @@ const UserManager = () => {
   };
   const handleAddRandomUsers = async () => {
     const newUsers = generateRandomUsers(10);
+    console.log(newUsers);
     const updatedUsers = [...users, ...newUsers];
     setUsers(updatedUsers);
     editorRef.current.jsonEditor.set(updatedUsers);

@@ -1,11 +1,27 @@
 import { v4 as uuidv4 } from 'uuid'; // For generating unique IDs
 
+// Define an Auth type for type-safety
+type Auth = {
+  id: string; // A 10-digit string
+  name: string;
+};
+
 type User = {
   id: string;
   name: string;
   role: 'admin' | 'editor' | 'viewer';
+  auth: Auth[]; // New auth property
   [key: string]: any;
 };
+
+// Helper function to generate a random auth object.
+// Here we generate a 10-digit ID and randomly choose an auth name.
+function generateRandomAuth(): Auth[] {
+  const authId = Math.floor(Math.random() * 9000000000 + 1000000000).toString();
+  const authNames = ['BasicAuth', 'TokenAuth', 'OAuth', 'SAML'];
+  const authName = authNames[Math.floor(Math.random() * authNames.length)];
+  return [{ id: authId, name: authName }];
+}
 
 export function generateRandomUsers(count: number = 10): User[] {
   const firstNames = ['Emma', 'Liam', 'Olivia', 'Noah', 'Ava', 'William', 'Sophia', 'James', 'Isabella', 'Oliver'];
@@ -27,7 +43,7 @@ export function generateRandomUsers(count: number = 10): User[] {
 
   // Possible optional properties with type-safe generators
   const optionalProperties = {
-    department: () => departments[Math.floor(Math.random() * departments.length)],
+    org_unit: () => departments[Math.floor(Math.random() * departments.length)],
     active: () => Math.random() > 0.3,
     accessLevel: () => Math.floor(Math.random() * 3) + 1,
     lastLogin: () => new Date(Date.now() - Math.random() * 1000 * 60 * 60 * 24 * 30).toISOString(),
@@ -44,6 +60,7 @@ export function generateRandomUsers(count: number = 10): User[] {
       id: uuidv4(),
       name: `${firstNames[index % firstNames.length]} ${lastNames[index % lastNames.length]}`,
       role: roles[Math.floor(Math.random() * roles.length)],
+      auth: generateRandomAuth(), // Add the new auth property
     };
 
     // Add 2-4 random optional properties

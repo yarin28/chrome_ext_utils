@@ -24,11 +24,11 @@ const SettingsManager = () => {
         setSettings(result.settings);
       } else {
         // Optionally, define your default settings here.
-        setSettings({
-          theme: 'light',
-          featureFlag: true,
-          customOption: 'value',
-        });
+        // setSettings({
+        //   theme: 'light',
+        //   featureFlag: true,
+        //   customOption: 'value',
+        // });
       }
       setLoading(false);
     });

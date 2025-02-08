@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button } from '@extension/ui';
 import { Label } from '@extension/ui';
 import { Input } from '@extension/ui';
+import { Textfit } from 'react-textfit';
 import { useStorage } from '@extension/shared';
 import { exampleThemeStorage } from '@extension/storage';
 import { AgGridReact } from 'ag-grid-react';
@@ -18,6 +19,7 @@ import {
 } from '@extension/ui';
 // import { GridExample } from './GridExample';
 import ButtonCellRenderer from './ButtonCellRenderer';
+import BadgeArrRenderer from './BadgeArrRenderer';
 
 export default function App() {
   const theme = useStorage(exampleThemeStorage);
@@ -38,7 +40,6 @@ export default function App() {
   useEffect(() => {
     console.log('content ui loaded');
   }, []);
-  const [rows, setRows] = useState([]);
 
   const GridExample = () => {
     // Row Data: The data to be displayed.
@@ -48,57 +49,54 @@ export default function App() {
 
     // Column Definitions: Defines the columns to be displayed.
     const [colDefs, setColDefs] = useState<any>([]);
-
-    const sendTableFetchMessage = async () => {
-      console.log('enterd sendTableFetchMessage');
-      try {
-        return await chrome.runtime.sendMessage({
-          action: 'fetchTable',
-          url: 'https://www.w3schools.com/html/html_tables.asp',
-        });
-      } catch (error: any) {
-        throw new Error('Failed to send message to fetch the table: ' + error.message);
-      }
-    };
-    const tableFetchResponseListner = () => {
-      console.log('tableFetchResponseListener');
-      chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-        const response = message;
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(response.html, 'text/html');
-        const targetTable = doc.getElementById(SETTINGS.TABLE_ID) as HTMLTableElement;
-        console.log(targetTable);
-        if (targetTable) {
-          const headerRow = targetTable.rows[0];
-          const headers = Array.from(headerRow.cells).map(cell => cell.textContent.trim());
-          const data = [];
-          for (let i = 1; i < targetTable.rows.length; i++) {
-            const row = targetTable.rows[i];
-            const rowData: { [key: string]: string } = {};
-            Array.from(row.cells).forEach((cell, index) => {
-              rowData[headers[index]] = cell.textContent.trim();
-            });
-            data.push(rowData);
-          }
-          let columns: any = headers.map(header => ({ field: header, filter: true, floatingFilter: true }));
-          columns.push({ field: 'actions', filter: false, floatingFilter: false, cellRenderer: ButtonCellRenderer });
-          setColDefs(columns);
-          setRowData(data);
-        }
-      });
-    };
+    const fixedFields = ['name', 'role'];
     const mySpecialFunction = (rowData: any) => {
       console.log('Row clicked:', rowData);
       // Additional custom logic here
     };
     const onGridReady = useCallback((params: GridReadyEvent) => {
       console.log('onGridReady');
-      sendTableFetchMessage();
+      const users = chrome.storage.sync.get(['users'], result => {
+        console.log(result);
+        setRowData(result.users);
+      });
+
+      // sendTableFetchMessage();
     }, []);
     useEffect(() => {
-      console.log('change2');
-      tableFetchResponseListner();
+      const fixedCols = fixedFields.map(field => {
+        return {
+          field: field,
+          headerName: field,
+          sortable: true,
+          filter: true,
+        };
+      });
+      const authCol = { field: 'auth', headerName: 'Auth', cellRenderer: BadgeArrRenderer, flex: 1 };
+      const customCols = {
+        headerName: 'Custom Fields',
+        flex: 2,
+        cellRenderer: (params: any) => {
+          // Get all keys on the user that are not in fixedFields
+          const customKeys = Object.keys(params.data).filter(key => !fixedFields.includes(key));
+          if (customKeys.length === 0) return null;
+          return (
+            <div>
+              <Textfit mode="multi">
+                {customKeys.map(key => (
+                  <p key={key}>
+                    <strong> {key}:</strong> {JSON.stringify(params.data[key])}
+                  </p>
+                ))}
+              </Textfit>
+            </div>
+          );
+        },
+      };
+      setColDefs([...fixedCols, authCol, customCols]);
+      // setColDefs([
     }, []);
+    useEffect(() => {}, []);
     const onRowClicked = useCallback((event: any) => {
       // event.event is the native click event
       const clickedElement = event.event.target;
@@ -150,6 +148,7 @@ export default function App() {
           quickFilterText={quickFilterText}
           onGridReady={onGridReady}
           onRowClicked={onRowClicked}
+          enableCellTextSelection={true}
         />
       </div>
     );
