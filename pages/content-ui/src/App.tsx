@@ -51,13 +51,13 @@ export default function App() {
     const [colDefs, setColDefs] = useState<any>([]);
     const fixedFields = ['name', 'role'];
     const mySpecialFunction = (rowData: any) => {
-      console.log('Row clicked:', rowData);
+      // console.log('Row clicked:', rowData);
       // Additional custom logic here
     };
     const onGridReady = useCallback((params: GridReadyEvent) => {
-      console.log('onGridReady');
+      // console.log('onGridReady');
       const users = chrome.storage.sync.get(['users'], result => {
-        console.log(result);
+        // console.log(result);
         setRowData(result.users);
       });
 
@@ -72,23 +72,80 @@ export default function App() {
           filter: true,
         };
       });
-      const authCol = { field: 'auth', headerName: 'Auth', cellRenderer: BadgeArrRenderer, flex: 1 };
+      const colFilterParams = {
+        textFormatter: (params: any) => {
+          let returnString = '';
+          if (params.value === undefined) {
+            returnString = params;
+          } else {
+            returnString = params.value; // already a string using the value formatter inside the colDef
+          }
+          console.log('textFormatter filter', returnString);
+          return returnString;
+        },
+        // filterValueGetter: (params: any) => {
+        //   let returnString = "";
+        //   if (params.value === undefined) { returnString = JSON.stringify(params) }
+        //   else {
+        //     returnString = params.value // already a string using the value formatter inside the colDef
+        //   }
+        //   console.log("filterValueGetter", returnString);
+        //   return returnString;
+        // },
+      };
+      const authCol = {
+        field: 'auth',
+        headerName: 'Auth',
+        cellRenderer: BadgeArrRenderer,
+        getQuickFilterText: (params: any) => {
+          // const authString = Array.isArray(params.data.auth) ? params.data.auth.join(" ") : params.data.auth;
+          const authString = JSON.stringify(params.data.auth);
+          // console.log(authString);
+          return authString;
+        },
+        filterParams: colFilterParams,
+        valueFormatter: (params: any) => {
+          let returnString = '';
+          if (params.value === undefined) {
+            returnString = JSON.stringify(params);
+          } else {
+            returnString = JSON.stringify(params.value);
+            // returnString = params.value
+          }
+          console.log('valueFormatter', returnString);
+          return returnString;
+        },
+        flex: 1,
+      };
       const customCols = {
         headerName: 'Custom Fields',
         flex: 2,
+        filterParams: colFilterParams,
+
+        valueFormatter: (params: any) => {
+          let returnString = '';
+          if (params.value === undefined) {
+            returnString = JSON.stringify(params.data);
+          } else {
+            returnString = JSON.stringify(params.value);
+            // returnString = params.value
+          }
+          console.log('valueFormatter', returnString);
+          return returnString;
+        },
         cellRenderer: (params: any) => {
           // Get all keys on the user that are not in fixedFields
           const customKeys = Object.keys(params.data).filter(key => !fixedFields.includes(key));
           if (customKeys.length === 0) return null;
           return (
-            <div>
-              <Textfit mode="multi">
-                {customKeys.map(key => (
-                  <p key={key}>
-                    <strong> {key}:</strong> {JSON.stringify(params.data[key])}
-                  </p>
-                ))}
-              </Textfit>
+            <div style={{ display: 'flex' }}>
+              {/* <Textfit mode="multi"> */}
+              {customKeys.map(key => (
+                <div key={key}>
+                  <strong> {key}:</strong> {JSON.stringify(params.data[key])}
+                </div>
+              ))}
+              {/* </Textfit> */}
             </div>
           );
         },
@@ -100,7 +157,7 @@ export default function App() {
     const onRowClicked = useCallback((event: any) => {
       // event.event is the native click event
       const clickedElement = event.event.target;
-      console.log(clickedElement.localName);
+      // console.log(clickedElement.localName);
       // If the click came from a BUTTON or an element inside a BUTTON, do nothing.
       if (clickedElement.localName === 'button' || clickedElement.closest('button')) {
         return;
@@ -114,19 +171,19 @@ export default function App() {
       );
 
       const displayedRowsCount = gridRef.current!.api.getDisplayedRowCount();
-      console.log(displayedRowsCount);
+      // console.log(displayedRowsCount);
       if (displayedRowsCount == 1) {
-        console.log('only one row');
+        // console.log('only one row');
         const row = gridRef.current!.api.getDisplayedRowAtIndex(0);
-        console.log(row);
+        // console.log(row);
         const keys = Object.keys(row.data);
-        console.log(keys);
+        // console.log(keys);
         const values = Object.values(row.data);
-        console.log(values);
+        // console.log(values);
         const data = keys.map((key, index) => {
           return { key: key, value: values[index] };
         });
-        console.log(data);
+        // console.log(data);
       }
     }, []);
     return (

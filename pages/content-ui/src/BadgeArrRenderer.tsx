@@ -32,7 +32,7 @@ const generateBadgeColor = (id: string): string => {
 
 const BadgeArrRenderer: React.FC<BadgeArrRendererProps> = props => {
   useEffect(() => {
-    console.log(props);
+    // console.log(props);
   }, [props]);
 
   // Ensure props.value is an array of BadgeItem objects
@@ -49,7 +49,7 @@ const BadgeArrRenderer: React.FC<BadgeArrRendererProps> = props => {
       }}>
       {props.value.map((item, index) => (
         <div
-          key={item.id || index}
+          key={index}
           style={{
             flexShrink: 1,
             flexGrow: 0,
