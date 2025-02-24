@@ -122,6 +122,14 @@ export default function App() {
         flex: 2,
         filterParams: colFilterParams,
 
+        getQuickFilterText: (params: any) => {
+          // const authString = Array.isArray(params.data.auth) ? params.data.auth.join(" ") : params.data.auth;
+          const customKeys = Object.keys(params.data).filter(key => !fixedFields.includes(key));
+          const values = JSON.stringify(customKeys.map(key => `${key} ${params.data[key]}`));
+          console.log('authString', customKeys);
+          // console.log(authString);
+          return values;
+        },
         valueFormatter: (params: any) => {
           let returnString = '';
           if (params.value === undefined) {
