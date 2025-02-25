@@ -24,23 +24,24 @@ ModuleRegistry.registerModules([
 import ace from 'brace';
 import 'brace/mode/json';
 import 'brace/theme/github';
-import { User } from './types';
+import { User } from '@extension/shared';
 import { generateRandomUsers } from './RandomUser';
 import { Button } from '@extension/ui';
 import React from 'react';
+import { useStorage } from '@extension/shared';
+import { usersStorage } from '@extension/storage';
 const UserManager = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showEditor, setShowEditor] = useState(false);
   const [viewMode, setViewMode] = useState<'form' | 'json'>('form');
-  const editorRef = React.createRef();
+  const editorRef: Editor = React.createRef();
 
-  // Load users from Chrome storage
   useEffect(() => {
-    chrome.storage.sync.get(['users'], result => {
-      if (result.users) {
-        setUsers(result.users);
-        editorRef.current.jsonEditor.set(result.users);
+    usersStorage.get().then(users => {
+      if (users) {
+        setUsers(users);
+        editorRef.current.jsonEditor.set(users);
       }
     });
   }, []);
@@ -76,10 +77,7 @@ const UserManager = () => {
     console.log('inside handleSave, the vars are selected user and editData:', selectedUser, users);
 
     if (!users) return;
-
-    chrome.storage.sync.set({ users }, () => {
-      console.log('Users saved:', users);
-    });
+    usersStorage.set(users);
     setShowEditor(false);
   };
 
