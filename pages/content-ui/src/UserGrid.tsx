@@ -4,7 +4,11 @@ import { AllCommunityModule, GridReadyEvent, ModuleRegistry } from 'ag-grid-comm
 import BadgeArrRenderer from './BadgeArrRenderer';
 import { Input } from '@extension/ui';
 
-const UserGrid = () => {
+interface UserGridProps {
+  onSelectCredential: (crediential: any) => void;
+  onSingleFilterResult: (crediential: any) => void;
+}
+const UserGrid: React.FC<UserGridProps> = ({ onSelectCredential, onSingleFilterResult }) => {
   // Row Data: The data to be displayed.
   const [rowData, setRowData] = useState<any>([]);
   const quickFilterText = '';
@@ -16,6 +20,8 @@ const UserGrid = () => {
   const mySpecialFunction = (rowData: any) => {
     // Additional custom logic here
   };
+  //register for the grid
+  ModuleRegistry.registerModules([AllCommunityModule]);
   const onGridReady = useCallback((params: GridReadyEvent) => {
     const users = chrome.storage.sync.get(['users'], result => {
       setRowData(result.users);
@@ -104,7 +110,6 @@ const UserGrid = () => {
     setColDefs([...fixedCols, authCol, customCols]);
     // setColDefs([
   }, []);
-  useEffect(() => {}, []);
   const onRowClicked = useCallback((event: any) => {
     // event.event is the native click event
     const clickedElement = event.event.target;
@@ -112,7 +117,8 @@ const UserGrid = () => {
     if (clickedElement.localName === 'button' || clickedElement.closest('button')) {
       return;
     }
-    mySpecialFunction(event.data);
+    // mySpecialFunction(event.data);
+    onSelectCredential({ username: event.data.name, password: event.data.role });
   }, []);
   const onFilterTextBoxChanged = useCallback((params: any) => {
     gridRef.current!.api.setGridOption(
@@ -123,11 +129,9 @@ const UserGrid = () => {
     const displayedRowsCount = gridRef.current!.api.getDisplayedRowCount();
     if (displayedRowsCount == 1) {
       const row = gridRef.current!.api.getDisplayedRowAtIndex(0);
-      const keys = Object.keys(row.data);
-      const values = Object.values(row.data);
-      const data = keys.map((key, index) => {
-        return { key: key, value: values[index] };
-      });
+      if (row) {
+        onSingleFilterResult({ username: row.data.name, password: row.data.role });
+      }
     }
   }, []);
   return (
