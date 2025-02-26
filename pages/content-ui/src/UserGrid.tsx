@@ -25,10 +25,9 @@ const UserGrid: React.FC<UserGridProps> = ({ onSelectCredential, onSingleFilterR
   ModuleRegistry.registerModules([AllCommunityModule]);
   const onGridReady = useCallback(async (params: GridReadyEvent) => {
     const users = await usersStorage.get();
-    if (users) {
+    if (!users || users.length === 0) {
       fetchUsersInit();
       fetchUsers();
-      console.log('fecthing users after there were none');
       setRowData(await usersStorage.get());
     }
   }, []);
@@ -57,13 +56,11 @@ const UserGrid: React.FC<UserGridProps> = ({ onSelectCredential, onSingleFilterR
       headerName: 'Auth',
       cellRenderer: BadgeArrRenderer,
       getQuickFilterText: (params: any) => {
-        console.log('params', params);
         const authString = JSON.stringify(params.data.auth);
         return authString;
       },
       filterParams: colFilterParams,
       valueFormatter: (params: any) => {
-        console.log('params', params);
         let returnString = '';
         if (params.value === undefined) {
           returnString = JSON.stringify(params.data);
@@ -82,13 +79,11 @@ const UserGrid: React.FC<UserGridProps> = ({ onSelectCredential, onSingleFilterR
       getQuickFilterText: (params: any) => {
         // const authString = Array.isArray(params.data.auth) ? params.data.auth.join(" ") : params.data.auth;
         const customKeys = Object.keys(params.data).filter(key => !fixedFields.includes(key));
-        console.log(customKeys.map(key => `${key} ${params.data[key]}`));
         const values = JSON.stringify(customKeys.map(key => `${key} ${params.data[key]}`));
         return values;
       },
       valueFormatter: (params: any) => {
         let returnString = '';
-        console.log(params);
         if (params.value === undefined) {
           returnString = JSON.stringify(params.data);
         } else {
