@@ -3,7 +3,8 @@ import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, GridReadyEvent, ModuleRegistry } from 'ag-grid-community';
 import BadgeArrRenderer from './BadgeArrRenderer';
 import { Input } from '@extension/ui';
-
+import { fetchUsers, fetchUsersInit } from '@extension/shared/lib/utils';
+import { usersStorage } from '@extension/storage';
 interface UserGridProps {
   onSelectCredential: (crediential: any) => void;
   onSingleFilterResult: (crediential: any) => void;
@@ -22,12 +23,14 @@ const UserGrid: React.FC<UserGridProps> = ({ onSelectCredential, onSingleFilterR
   };
   //register for the grid
   ModuleRegistry.registerModules([AllCommunityModule]);
-  const onGridReady = useCallback((params: GridReadyEvent) => {
-    const users = chrome.storage.sync.get(['users'], result => {
-      setRowData(result.users);
-    });
-
-    // sendTableFetchMessage();
+  const onGridReady = useCallback(async (params: GridReadyEvent) => {
+    const users = await usersStorage.get();
+    if (users) {
+      fetchUsersInit();
+      fetchUsers();
+      console.log('fecthing users after there were none');
+      setRowData(await usersStorage.get());
+    }
   }, []);
   useEffect(() => {
     const fixedCols = fixedFields.map(field => {
@@ -54,14 +57,16 @@ const UserGrid: React.FC<UserGridProps> = ({ onSelectCredential, onSingleFilterR
       headerName: 'Auth',
       cellRenderer: BadgeArrRenderer,
       getQuickFilterText: (params: any) => {
+        console.log('params', params);
         const authString = JSON.stringify(params.data.auth);
         return authString;
       },
       filterParams: colFilterParams,
       valueFormatter: (params: any) => {
+        console.log('params', params);
         let returnString = '';
         if (params.value === undefined) {
-          returnString = JSON.stringify(params);
+          returnString = JSON.stringify(params.data);
         } else {
           returnString = JSON.stringify(params.value);
         }
@@ -77,11 +82,13 @@ const UserGrid: React.FC<UserGridProps> = ({ onSelectCredential, onSingleFilterR
       getQuickFilterText: (params: any) => {
         // const authString = Array.isArray(params.data.auth) ? params.data.auth.join(" ") : params.data.auth;
         const customKeys = Object.keys(params.data).filter(key => !fixedFields.includes(key));
+        console.log(customKeys.map(key => `${key} ${params.data[key]}`));
         const values = JSON.stringify(customKeys.map(key => `${key} ${params.data[key]}`));
         return values;
       },
       valueFormatter: (params: any) => {
         let returnString = '';
+        console.log(params);
         if (params.value === undefined) {
           returnString = JSON.stringify(params.data);
         } else {
