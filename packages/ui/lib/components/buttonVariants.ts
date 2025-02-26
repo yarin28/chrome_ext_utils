@@ -13,6 +13,7 @@ export const buttonVariants = cva(
         link: 'underline-offset-4 hover:underline text-primary',
         // Add your custom variant here:
         custom: 'bg-purple-500 text-white hover:bg-purple-600',
+        success: 'bg-green-500 text-white hover:bg-purple-600',
       },
       size: {
         default: 'h-10 px-4 py-2',
