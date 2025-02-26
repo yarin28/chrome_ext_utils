@@ -30,6 +30,8 @@ import { Button } from '@extension/ui';
 import React from 'react';
 import { useStorage } from '@extension/shared';
 import { usersStorage } from '@extension/storage';
+import { ConfirmationDialog } from './ConfirmationDialog';
+
 const UserManager = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -46,25 +48,6 @@ const UserManager = () => {
     });
   }, []);
 
-  // Ag-Grid configuration
-  const columnDefs = [
-    { field: 'name', headerName: 'Name', sortable: true, filter: true },
-    { field: 'role', headerName: 'Role', sortable: true, filter: true },
-    {
-      headerName: 'Actions',
-      cellRenderer: (params: any) => (
-        <button className="edit-btn" onClick={() => handleEdit(params.data)}>
-          Edit
-        </button>
-      ),
-    },
-  ];
-
-  const defaultColDef = {
-    flex: 1,
-    resizable: true,
-  };
-
   const handleEdit = (users: User[]) => {
     setUsers({ ...users });
     if (editorRef.current) {
@@ -74,13 +57,27 @@ const UserManager = () => {
   };
 
   const handleSave = async () => {
-    console.log('inside handleSave, the vars are selected user and editData:', selectedUser, users);
+    console.log('inside handleSave, the vars are selected user and editData:', users);
 
     if (!users) return;
     usersStorage.set(users);
     setShowEditor(false);
   };
 
+  const handleAccept = (): void => {
+    console.log('Action confirmed!');
+    // add your custom logic here
+    usersStorage.set(users);
+  };
+
+  const handleCancel = (): void => {
+    console.log('Action cancelled!');
+    // add your custom logic here
+  };
+  const computeCondition = () => {
+    if (!users) return true;
+    else return false;
+  };
   const handleJsonChange = (json: any) => {
     console.log('json:', json);
     setUsers(json);
@@ -117,9 +114,12 @@ const UserManager = () => {
           <Button variant="outline" onClick={() => setShowEditor(false)}>
             Cancel
           </Button>
-          <Button variant="outline" onClick={handleSave}>
-            Save Changes
-          </Button>
+          <ConfirmationDialog
+            buttonText="Save"
+            onAccept={handleAccept}
+            onCancel={handleCancel}
+            computeCondition={computeCondition}
+          />
         </div>
       </div>
     </div>
