@@ -16,11 +16,17 @@ type User = {
 
 // Helper function to generate a random auth object.
 // Here we generate a 10-digit ID and randomly choose an auth name.
+// every user has at least 3 auth
 function generateRandomAuth(): Auth[] {
-  const authId = Math.floor(Math.random() * 9000000000 + 1000000000).toString();
-  const authNames = ['BasicAuth', 'TokenAuth', 'OAuth', 'SAML'];
-  const authName = authNames[Math.floor(Math.random() * authNames.length)];
-  return [{ id: authId, name: authName }];
+  const authCount = Math.floor(Math.random() * 3) + 1;
+  const auths: Auth[] = [];
+  for (let i = 0; i < authCount; i++) {
+    const authId = Math.floor(Math.random() * 9000000000 + 1000000000).toString();
+    const authNames = ['BasicAuth', 'TokenAuth', 'OAuth', 'SAML'];
+    const authName = authNames[Math.floor(Math.random() * authNames.length)];
+    auths.push({ id: authId, name: authName });
+  }
+  return auths;
 }
 
 export function generateRandomUsers(count: number = 10): User[] {
