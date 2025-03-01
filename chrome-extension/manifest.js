@@ -4,7 +4,7 @@ import deepmerge from 'deepmerge';
 const packageJson = JSON.parse(fs.readFileSync('../package.json', 'utf8'));
 
 const isFirefox = process.env.__FIREFOX__ === 'true';
-
+const isDev = process.env.NODE_ENV === '__DEV__';
 /**
  * If you want to disable the sidePanel, you can delete withSidePanel function and remove the sidePanel HoC on the manifest declaration.
  *
@@ -59,13 +59,13 @@ const manifest = withSidePanel({
   content_scripts: [
     {
       matches: ['http://*/*', 'https://*/*', '<all_urls>', 'file://*/*'],
-      // js: ['content/index.iife.js', 'content/index.iife_dev.js'],
-      js: ['content/index.iife.js'],
+      js: ['content/index.iife.js', 'content/index.iife_dev.js'],
+      // js: ['content/index.iife.js'],
     },
     {
       matches: ['http://*/*', 'https://*/*', '<all_urls>', 'file://*/*'],
-      // js: ['content-ui/index.iife.js', 'content-ui/index.iife_dev.js'],
-      js: ['content-ui/index.iife.js'],
+      js: ['content-ui/index.iife.js', 'content-ui/index.iife_dev.js'],
+      // js: ['content-ui/index.iife.js'],
     },
     {
       matches: ['http://*/*', 'https://*/*', '<all_urls>'],
