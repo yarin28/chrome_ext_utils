@@ -31,10 +31,26 @@ interface Credentials {
 export default function App() {
   const theme = useStorage(exampleThemeStorage);
   const [showDialog, setShowDialog] = useState(false);
+  const [env, setEnv] = useState<String>('');
   const [firstDialogShow, setFirstDialogShow] = useState(true);
   const [formData, setFormData] = useState<FormData | null>(null);
   const observerRef = useRef<MutationObserver | null>(null);
 
+  useEffect(() => {
+    const location = document.location.href;
+    if (location.includes('qas')) {
+      setEnv('qas');
+    }
+    if (location.includes('preprod')) {
+      setEnv('preprod');
+    }
+    if (location.includes('dev')) {
+      setEnv('dev');
+    }
+    if (location.includes('gw.erp')) {
+      setEnv('prod');
+    }
+  }, []);
   const fillFromWithCredentials = (credentials: Credentials) => {
     if (!formData) {
       toast.error('could not find the form on the website');
