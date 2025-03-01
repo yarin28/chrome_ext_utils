@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, GridReadyEvent, ModuleRegistry } from 'ag-grid-community';
 import { ProjectBadgeCellRenderer } from './AuthBadgeRenderer';
+import { JsonCellRenderer } from './JsonCellRenderer';
 import { Input } from '@extension/ui';
 import { fetchUsers, fetchUsersInit } from '@extension/shared/lib/utils';
 import { usersStorage } from '@extension/storage';
@@ -86,32 +87,33 @@ const UserGrid: React.FC<UserGridProps> = ({ onSelectCredential, onSingleFilterR
         const values = JSON.stringify(customKeys.map(key => `${key} ${params.data[key]}`));
         return values;
       },
-      valueFormatter: (params: any) => {
-        let returnString = '';
-        if (params.value === undefined) {
-          returnString = JSON.stringify(params.data);
-        } else {
-          returnString = JSON.stringify(params.value);
-          // returnString = params.value
-        }
-        return returnString;
-      },
-      cellRenderer: (params: any) => {
-        // Get all keys on the user that are not in fixedFields
-        const customKeys = Object.keys(params.data).filter(key => !fixedFields.includes(key));
-        if (customKeys.length === 0) return null;
-        return (
-          <div style={{ display: 'flex' }}>
-            {/* <Textfit mode="multi"> */}
-            {customKeys.map(key => (
-              <div key={key}>
-                <strong> {key}:</strong> {JSON.stringify(params.data[key])}
-              </div>
-            ))}
-            {/* </Textfit> */}
-          </div>
-        );
-      },
+      // valueFormatter: (params: any) => {
+      //   let returnString = '';
+      //   if (params.value === undefined) {
+      //     returnString = JSON.stringify(params.data);
+      //   } else {
+      //     returnString = JSON.stringify(params.value);
+      //     // returnString = params.value
+      //   }
+      //   return returnString;
+      // },
+      // cellRenderer: (params: any) => {
+      //   // Get all keys on the user that are not in fixedFields
+      //   const customKeys = Object.keys(params.data).filter(key => !fixedFields.includes(key));
+      //   if (customKeys.length === 0) return null;
+      //   return (
+      //     <div style={{ display: 'flex' }}>
+      //       {/* <Textfit mode="multi"> */}
+      //       {customKeys.map(key => (
+      //         <div key={key}>
+      //           <strong> {key}:</strong> {JSON.stringify(params.data[key])}
+      //         </div>
+      //       ))}
+      //       {/* </Textfit> */}
+      //     </div>
+      //   );
+      // },
+      cellRenderer: JsonCellRenderer,
     };
     setColDefs([...fixedCols, authCol, customCols]);
     // setColDefs([
