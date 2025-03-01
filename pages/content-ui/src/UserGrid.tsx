@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, GridReadyEvent, ModuleRegistry } from 'ag-grid-community';
-import BadgeArrRenderer from './BadgeArrRenderer';
+import { ProjectBadgeCellRenderer } from './AuthBadgeRenderer';
 import { Input } from '@extension/ui';
 import { fetchUsers, fetchUsersInit } from '@extension/shared/lib/utils';
 import { usersStorage } from '@extension/storage';
@@ -54,7 +54,7 @@ const UserGrid: React.FC<UserGridProps> = ({ onSelectCredential, onSingleFilterR
     const authCol = {
       field: 'auth',
       headerName: 'Auth',
-      cellRenderer: BadgeArrRenderer,
+      cellRenderer: ProjectBadgeCellRenderer,
       getQuickFilterText: (params: any) => {
         const authString = JSON.stringify(params.data.auth);
         return authString;
@@ -71,6 +71,9 @@ const UserGrid: React.FC<UserGridProps> = ({ onSelectCredential, onSingleFilterR
       },
       flex: 1,
       autoHeight: true,
+      cellClassRules: {
+        'no-row-click': () => true,
+      },
     };
     const customCols = {
       headerName: 'Custom Fields',
@@ -116,11 +119,22 @@ const UserGrid: React.FC<UserGridProps> = ({ onSelectCredential, onSingleFilterR
   const onRowClicked = useCallback((event: any) => {
     // event.event is the native click event
     const clickedElement = event.event.target;
+    console.log(event);
     // If the click came from a BUTTON or an element inside a BUTTON, do nothing.
     if (clickedElement.localName === 'button' || clickedElement.closest('button')) {
       return;
     }
-    // mySpecialFunction(event.data);
+    // event.eventPath.forEach((element: any) => {
+    //   console.log("element ", element, " ement.className ", element.className);
+    //   if (element.className.includes("no-row-click")) {
+    //     return;
+    //   }
+    // });
+    for (let i = 0; i < event.eventPath.length; i++) {
+      if (event.eventPath[i].className !== null && event.eventPath[i].className?.includes('no-row-click')) {
+        return;
+      }
+    }
     onSelectCredential({ username: event.data.name, password: event.data.role });
   }, []);
   const onFilterTextBoxChanged = useCallback((params: any) => {
