@@ -28,8 +28,8 @@ const UserGrid: React.FC<UserGridProps> = ({ onSelectCredential, onSingleFilterR
     if (!users || users.length === 0) {
       fetchUsersInit();
       fetchUsers();
-      setRowData(await usersStorage.get());
     }
+    setRowData(await usersStorage.get());
   }, []);
   useEffect(() => {
     const fixedCols = fixedFields.map(field => {
