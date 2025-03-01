@@ -70,6 +70,7 @@ const UserGrid: React.FC<UserGridProps> = ({ onSelectCredential, onSingleFilterR
         return returnString;
       },
       flex: 1,
+      autoHeight: true,
     };
     const customCols = {
       headerName: 'Custom Fields',
