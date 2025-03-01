@@ -16,7 +16,6 @@ export const JsonCellRenderer = (props: JsonCellRendererParams) => {
 
   useEffect(() => {
     // Log the JSON data
-    console.log('props', props);
   }, []);
   // Count the number of keys in the JSON object
   const keyCount = Object.keys(jsonData).length;
