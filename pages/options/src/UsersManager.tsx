@@ -24,7 +24,7 @@ ModuleRegistry.registerModules([
 import ace from 'brace';
 import 'brace/mode/json';
 import 'brace/theme/github';
-import { User } from '@extension/shared';
+import { User, UsersStorageType } from '@extension/shared';
 import { generateRandomUsers } from './RandomUser';
 import { Button } from '@extension/ui';
 import React from 'react';
@@ -33,7 +33,7 @@ import { usersStorage } from '@extension/storage';
 import { ConfirmationDialog } from './ConfirmationDialog';
 
 const UserManager = () => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<UsersStorageType>();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showEditor, setShowEditor] = useState(false);
   const [viewMode, setViewMode] = useState<'form' | 'json'>('form');
@@ -48,7 +48,7 @@ const UserManager = () => {
     });
   }, []);
 
-  const handleEdit = (users: User[]) => {
+  const handleEdit = (users: UsersStorageType) => {
     setUsers({ ...users });
     if (editorRef.current) {
       editorRef.current.jsonEditor.set({ ...users });
@@ -67,6 +67,7 @@ const UserManager = () => {
   const handleAccept = (): void => {
     console.log('Action confirmed!');
     // add your custom logic here
+    if (!users) return; //todo
     usersStorage.set(users);
   };
 
@@ -85,9 +86,21 @@ const UserManager = () => {
   const handleAddRandomUsers = async () => {
     const newUsers = generateRandomUsers(10);
     console.log(newUsers);
-    const updatedUsers = [...users, ...newUsers];
-    setUsers(updatedUsers);
-    editorRef.current.jsonEditor.set(updatedUsers);
+    if (users === undefined) {
+      setUsers({ qas: newUsers, preprod: newUsers });
+      editorRef.current.jsonEditor.set({ qas: newUsers, preprod: newUsers });
+      return;
+    }
+
+    // const addToKey = (key: string, value: number) => {
+    //   setUsers(prevState => ({
+    //     ...prevState,
+    //     [key]: [...(prevState[key] || []), value] // Append value immutably
+    //   }));
+    // };
+    // };
+    setUsers({ ['qas']: newUsers });
+    editorRef.current.jsonEditor.set({ ['qas']: newUsers });
   };
   return (
     <div className="user-manager">

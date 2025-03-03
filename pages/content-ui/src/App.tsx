@@ -155,7 +155,10 @@ export default function App() {
               <DialogTitle>Select User Test </DialogTitle>
               <DialogDescription>select user test from list, you can filter the each row.</DialogDescription>
             </DialogHeader>
-            <UserGrid onSelectCredential={onSelectCredential} onSingleFilterResult={onSingleFilterResult}></UserGrid>
+            <UserGrid
+              onSelectCredential={onSelectCredential}
+              onSingleFilterResult={onSingleFilterResult}
+              env={env}></UserGrid>
             <DialogFooter>
               <Button type="submit">Save changes</Button>
             </DialogFooter>

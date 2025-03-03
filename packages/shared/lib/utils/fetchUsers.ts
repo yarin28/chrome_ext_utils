@@ -19,14 +19,15 @@ chrome.storage.sync.get(['settings'], result => {
 export const fetchUsersInit = () => {
   tableFetchResponseListner();
 };
-export const fetchUsers = async () => {
-  sendTableFetchMessage();
+export const fetchUsers = async (env: string) => {
+  sendTableFetchMessage(env);
 };
 
 const tableFetchResponseListner = () => {
   console.log('tableFetchResponseListener');
   chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     const response = message;
+    const env = message.env;
     const parser = new DOMParser();
     const doc = parser.parseFromString(response.html, 'text/html');
     const targetTable = doc.getElementById(settings.TABLE_ID) as HTMLTableElement;
@@ -56,17 +57,24 @@ const tableFetchResponseListner = () => {
         users.push(user);
       }
       console.log('added users from fetchUsers to storage', users);
-      usersStorage.set(users);
+      const currentUsers = await usersStorage.get();
+      if (currentUsers === null) {
+        usersStorage.set({ [env]: users });
+      } else {
+        currentUsers[env] = users;
+        usersStorage.set(currentUsers);
+      }
     }
   });
 };
 
-export const sendTableFetchMessage = async () => {
+export const sendTableFetchMessage = async (env: string) => {
   console.log('enterd sendTableFetchMessage');
   try {
     return await chrome.runtime.sendMessage({
       action: 'fetchTable',
       url: 'https://www.w3schools.com/html/html_tables.asp',
+      env: env,
     });
   } catch (error: any) {
     throw new Error('Failed to send message to fetch the table: ' + error.message);
