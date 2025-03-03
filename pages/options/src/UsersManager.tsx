@@ -91,10 +91,6 @@ const UserManager = () => {
   };
   return (
     <div className="user-manager">
-      <Button onClick={handleAddRandomUsers} variant="custom">
-        Add Random Users
-      </Button>
-
       <div className="editor-modal">
         <div className="json-view">
           <Editor
@@ -106,7 +102,7 @@ const UserManager = () => {
             history={true}
             navigationBar={false}
             statusBar={false}
-            style={{ height: '400px' }}
+            htmlElementProps={{ style: { height: '90vh' } }}
           />
         </div>
 
@@ -120,6 +116,9 @@ const UserManager = () => {
             onCancel={handleCancel}
             computeCondition={computeCondition}
           />
+          <Button onClick={handleAddRandomUsers} variant="custom">
+            Add Random Users
+          </Button>
         </div>
       </div>
     </div>

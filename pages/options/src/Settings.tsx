@@ -61,7 +61,7 @@ const SettingsManager = () => {
   return (
     <div style={{ padding: '1em' }}>
       <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-        <AuroraText>Extension Options</AuroraText>
+        <AuroraText>Extension Options 2</AuroraText>
       </h1>
       {/* Render the JSON editor with your settings */}
       <Editor
@@ -71,7 +71,10 @@ const SettingsManager = () => {
         ace={ace}
         mode="code"
         allowedModes={['code', 'tree', 'view', 'form', 'text']}
-        theme="ace/theme/github"
+        history={true}
+        search={true}
+        htmlElementProps={{ style: { height: '90vh' } }}
+        // theme="ace/theme/github"
       />
       <button onClick={handleSave} style={{ marginTop: '1em' }}>
         Save Settings
