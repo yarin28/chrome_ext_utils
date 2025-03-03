@@ -12,13 +12,14 @@ console.log("Edit 'chrome-extension/src/background/index.ts' and save to reload.
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'fetchTable') {
     // console.log('Fetching table from:', request.url);
+    const env = request.env;
     fetch(request.url)
       .then(html => html.text())
       .then(html => {
         // console.log("Html:", html);
         // sendResponse({ success: true, html: html });
         // console.log('Sending response to:', sender.tab);
-        sender.tab ? chrome.tabs.sendMessage(sender.tab.id, { success: true, html: html }) : null;
+        sender.tab ? chrome.tabs.sendMessage(sender.tab.id, { success: true, env: env, html: html }) : null;
         sendResponse({ success: true, html: html });
       })
       .catch(e => {
