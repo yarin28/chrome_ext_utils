@@ -9,8 +9,9 @@ import { usersStorage } from '@extension/storage';
 interface UserGridProps {
   onSelectCredential: (crediential: any) => void;
   onSingleFilterResult: (crediential: any) => void;
+  env: string;
 }
-const UserGrid: React.FC<UserGridProps> = ({ onSelectCredential, onSingleFilterResult }) => {
+const UserGrid: React.FC<UserGridProps> = ({ onSelectCredential, onSingleFilterResult, env }) => {
   // Row Data: The data to be displayed.
   const [rowData, setRowData] = useState<any>([]);
   const quickFilterText = '';
@@ -25,12 +26,17 @@ const UserGrid: React.FC<UserGridProps> = ({ onSelectCredential, onSingleFilterR
   //register for the grid
   ModuleRegistry.registerModules([AllCommunityModule]);
   const onGridReady = useCallback(async (params: GridReadyEvent) => {
+    // const key: keyof User[] = env;
     const users = await usersStorage.get();
-    if (!users || users.length === 0) {
+    console.log('env', env);
+    console.log('users', users);
+    if (users === null || users[env] == undefined || users[env].length === 0) {
+      console.log('inside if');
       fetchUsersInit();
-      fetchUsers();
+      fetchUsers(env);
+    } else {
+      setRowData(users[env]);
     }
-    setRowData(await usersStorage.get());
   }, []);
   useEffect(() => {
     const fixedCols = fixedFields.map(field => {

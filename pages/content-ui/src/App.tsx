@@ -31,7 +31,7 @@ interface Credentials {
 export default function App() {
   const theme = useStorage(exampleThemeStorage);
   const [showDialog, setShowDialog] = useState(false);
-  const [env, setEnv] = useState<String>('');
+  const [env, setEnv] = useState<string>('');
   const [firstDialogShow, setFirstDialogShow] = useState(true);
   const [formData, setFormData] = useState<FormData | null>(null);
   const observerRef = useRef<MutationObserver | null>(null);
@@ -155,7 +155,10 @@ export default function App() {
               <DialogTitle>Select User Test </DialogTitle>
               <DialogDescription>select user test from list, you can filter the each row.</DialogDescription>
             </DialogHeader>
-            <UserGrid onSelectCredential={onSelectCredential} onSingleFilterResult={onSingleFilterResult}></UserGrid>
+            <UserGrid
+              onSelectCredential={onSelectCredential}
+              onSingleFilterResult={onSingleFilterResult}
+              env={env}></UserGrid>
             <DialogFooter>
               <Button type="submit">Save changes</Button>
             </DialogFooter>
