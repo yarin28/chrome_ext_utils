@@ -31,7 +31,7 @@ interface Credentials {
 export default function App() {
   const theme = useStorage(exampleThemeStorage);
   const [showDialog, setShowDialog] = useState(false);
-  const [env, setEnv] = useState<String>('');
+  const [env, setEnv] = useState<string>('');
   const [firstDialogShow, setFirstDialogShow] = useState(true);
   const [formData, setFormData] = useState<FormData | null>(null);
   const observerRef = useRef<MutationObserver | null>(null);

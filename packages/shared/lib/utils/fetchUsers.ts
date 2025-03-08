@@ -28,6 +28,7 @@ const tableFetchResponseListner = () => {
   chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     const response = message;
     const env = message.env;
+    console.log('message.env', message.env);
     const parser = new DOMParser();
     const doc = parser.parseFromString(response.html, 'text/html');
     const targetTable = doc.getElementById(settings.TABLE_ID) as HTMLTableElement;
@@ -49,8 +50,8 @@ const tableFetchResponseListner = () => {
         });
         data.push(rowData);
         const user: User = {
-          name: rowData.Name,
-          role: rowData.Role,
+          name: rowData.Contact,
+          role: rowData.Company,
           id: i.toString(),
           ...rowData,
         };
@@ -73,7 +74,7 @@ export const sendTableFetchMessage = async (env: string) => {
   try {
     return await chrome.runtime.sendMessage({
       action: 'fetchTable',
-      url: 'https://www.w3schools.com/html/html_tables.asp',
+      url: settings['TABLE_URLS'][env],
       env: env,
     });
   } catch (error: any) {

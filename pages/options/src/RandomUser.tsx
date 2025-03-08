@@ -87,5 +87,5 @@ export function generateRandomUsers(count: number = 10): User[] {
 }
 
 // Usage example:
-const mockUsers = generateRandomUsers(10);
-console.log(mockUsers);
+// const mockUsers = generateRandomUsers(10);
+// console.log(mockUsers);
