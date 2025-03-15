@@ -32,6 +32,7 @@
   "dependencies": {
     "@laynezh/vite-plugin-lib-assets": "^0.6.1",
     "@radix-ui/react-dialog": "^1.1.5",
+    "@tar-erpedia/deep-pack": "^0.1.8",
     "@vitejs/plugin-react-swc": "^3.7.2",
     "ag-grid-community": "^33.0.4",
     "ag-grid-react": "^33.0.4",
@@ -45,6 +46,7 @@
     "react-devtools": "^6.1.0",
     "react-dom": "18.3.1",
     "react-textfit": "^1.1.1",
+    "rollup": "^4.24.0",
     "sonner": "^1.7.2",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
