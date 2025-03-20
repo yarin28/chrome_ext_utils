@@ -12,8 +12,13 @@ in {
     pkgs.nodejs_23
     (pkgs.nodePackages.pnpm.override { nodejs = pkgs.nodejs_23; })
   ];
-  # https://devenv.sh/languages/
 
+  # https://devenv.sh/languages/
+  languages.python.enable = true;
+  languages.python.uv.enable = true;
+  # languages.python.packages = [
+  #
+  # ];
   # https://devenv.sh/processes/
   # processes.fast-api_dev_server.exec = "fastapi dev";
 

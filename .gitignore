@@ -25,3 +25,6 @@ chrome-extension/public/manifest.json
 .direnv
 .envrc
 .devenv.flake.nix
+tar_deps
+deep-pack-resolved-deps-log.txt
+ext_libs.tgz
